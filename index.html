@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tavin - Digital Portal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background: #050505;
+        }
+
+        /* ===== INTRO - FUNDO BRANCO ===== */
+        .intro {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .intro-panel {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50.1%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        .intro-panel.top {
+            top: 0;
+            align-items: flex-end;
+        }
+
+        .intro-panel.bottom {
+            bottom: 0;
+            align-items: flex-start;
+        }
+
+        .intro-logo {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(4.5rem, 14vw, 11rem);
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        .intro-panel.top .intro-logo {
+            transform: translateY(52%);
+        }
+
+        .intro-panel.bottom .intro-logo {
+            transform: translateY(-48%);
+            opacity: 0.08;
+        }
+
+        .intro-hint {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 1s ease 0.5s both;
+        }
+
+        .intro-hint span {
+            font-size: 10px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: #999;
+        }
+
+        .intro-hint .line {
+            width: 1px;
+            height: 35px;
+            background: linear-gradient(to bottom, #999, transparent);
+            animation: pulse-line 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.5; height: 35px; }
+            50% { opacity: 1; height: 45px; }
+        }
+
+        .split-line {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #000;
+            z-index: 1002;
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .transitioning .split-line {
+            transform: scaleX(1);
+        }
+
+        .opened .intro-panel.top {
+            transform: translateY(-100%);
+        }
+
+        .opened .intro-panel.bottom {
+            transform: translateY(100%);
+        }
+
+        .opened .intro-hint {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .complete .intro {
+            display: none;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 1;
+            animation: float-orb 20s ease-in-out infinite;
+        }
+
+        .bg-orb-1 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(200, 200, 200, 0.1) 40%, transparent 70%);
+            top: -250px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(180, 180, 180, 0.3) 0%, rgba(150, 150, 150, 0.15) 40%, transparent 70%);
+            bottom: -200px;
+            right: -150px;
+            animation-delay: -7s;
+        }
+
+        .bg-orb-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(220, 220, 220, 0.2) 0%, rgba(200, 200, 200, 0.1) 40%, transparent 70%);
+            top: 30%;
+            left: 40%;
+            animation-delay: -14s;
+        }
+
+        .bg-orb-4 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(240, 240, 240, 0.25) 0%, rgba(210, 210, 210, 0.1) 40%, transparent 70%);
+            top: 10%;
+            right: 5%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float-orb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -30px) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, 40px) scale(0.95);
+            }
+            75% {
+                transform: translate(-40px, -20px) scale(1.05);
+            }
+        }
+
+        /* Noise overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ===== PÁGINA PRINCIPAL ===== */
+        .main {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px 50px;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.4s;
+        }
+
+        .opened .main {
+            opacity: 1;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+            max-width: 550px;
+        }
+
+        .headline {
+            font-size: clamp(2.2rem, 7vw, 3rem);
+            line-height: 1.15;
+            margin-bottom: 16px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+        }
+
+        .headline .light {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+        }
+
+        .headline .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .subheadline {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            font-weight: 400;
+            color: rgba(255,255,255,0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s;
+        }
+
+        /* ===== SOCIAL BADGES ===== */
+        .social-badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.85s;
+        }
+
+        .social-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 400;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-badge::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .social-badge:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .social-badge:hover::before {
+            opacity: 1;
+        }
+
+        .social-badge .icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .social-badge:hover .icon {
+            transform: rotate(-5deg) scale(1.1);
+        }
+
+        .social-badge .icon.instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .social-badge .icon.tiktok {
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .social-badge .icon.youtube {
+            background: #ff0000;
+        }
+
+        .social-badge .icon svg {
+            width: 12px;
+            height: 12px;
+            fill: #fff;
+        }
+
+        /* ===== CARDS ===== */
+        .cards {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card:nth-child(1) { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s; }
+        .card:nth-child(2) { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.15s; }
+        .card:nth-child(3) { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.3s; }
+        .card:nth-child(4) { animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.45s; }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.01);
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card:hover::before,
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .card-icon svg {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon svg {
+            transform: scale(1.1);
+        }
+
+        .card-icon.dark {
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .card-icon.dark svg {
+            stroke: #fff;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .card-icon.gray {
+            background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .card-icon.gray svg {
+            fill: #fff;
+        }
+
+        .card-icon.orange {
+            background: linear-gradient(145deg, #ff7043, #e64a19);
+            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.3);
+        }
+
+        .card-icon.orange svg {
+            fill: #fff;
+        }
+
+        .card-icon.beige {
+            background: linear-gradient(145deg, #e0d4c0, #c9b896);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .card-icon.beige svg {
+            fill: #1a1a1a;
+        }
+
+        .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-info h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 5px;
+            transition: color 0.3s;
+        }
+
+        .card-info p {
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.5;
+            transition: color 0.3s;
+        }
+
+        .card:hover .card-info p {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .card-info p strong {
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+        }
+
+        .card-arrow {
+            width: 46px;
+            height: 46px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 14px;
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-arrow svg {
+            width: 18px;
+            height: 18px;
+            stroke: rgba(255,255,255,0.35);
+            stroke-width: 2;
+            fill: none;
+            transition: all 0.4s ease;
+        }
+
+        .card:hover .card-arrow {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.15);
+            transform: rotate(0deg);
+        }
+
+        .card:hover .card-arrow svg {
+            stroke: #fff;
+            transform: translate(2px, -2px);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            opacity: 0;
+            animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.6s;
+        }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .social-badges {
+                gap: 8px;
+            }
+
+            .social-badge {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card-icon {
+                width: 54px;
+                height: 54px;
+                margin-right: 14px;
+            }
+
+            .card-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .card-arrow {
+                width: 40px;
+                height: 40px;
+            }
+
+            .headline {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro com fundo branco -->
+    <div class="intro" onclick="openPortal()">
+        <div class="intro-panel top">
+            <span class="intro-logo">Tavin</span>
+        </div>
+        <div class="intro-panel bottom">
+            <span class="intro-logo">Tavin</span>
+        </div>
+        <div class="intro-hint">
+            <span>Entrar</span>
+            <div class="line"></div>
+        </div>
+    </div>
+    <div class="split-line"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-animated">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-orb bg-orb-4"></div>
+    </div>
+    <div class="noise"></div>
+
+    <!-- Página principal -->
+    <div class="main">
+        <header class="header">
+            <h1 class="headline">
+                <span class="light">Grandes mudanças começam com</span><br>
+                <span class="serif">pequenos passos.</span>
+            </h1>
+            <p class="subheadline">Mude antes que precise...</p>
+        </header>
+
+        <!-- Social Badges -->
+        <div class="social-badges">
+            <a href="#" class="social-badge">
+                <span class="icon instagram">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </span>
+                @tavinpz
+            </a>
+            <a href="#" class="social-badge">
+                <span class="icon tiktok">
+                    <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                </span>
+                @tavinpv
+            </a>
+            <a href="#" class="social-badge">
+                <span class="icon youtube">
+                    <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </span>
+                @tavinjourney
+            </a>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards">
+            <!-- Crie Habitus -->
+            <a href="#" class="card">
+                <div class="card-icon dark">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="card-info">
+                    <h3>Crie Habitus</h3>
+                    <p>Organize toda a sua vida com um Segundo Cérebro Digital.</p>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"/>
+                        <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Soluções Digitais -->
+            <a href="#" class="card">
+                <div class="card-icon gray">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div class="card-info">
+                    <h3>Soluções Digitais</h3>
+                    <p><strong>Multiplique Seus Resultados</strong>: Design criativo, automações e conteúdo.</p>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"/>
+                        <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- News do Tavin -->
+            <a href="#" class="card">
+                <div class="card-icon orange">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </div>
+                <div class="card-info">
+                    <h3>News do Tavin</h3>
+                    <p>Faça parte da minha Newsletter e receba e-mails semanalmente.</p>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"/>
+                        <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Best-Sellers Gratuitos -->
+            <a href="#" class="card">
+                <div class="card-icon beige">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                <div class="card-info">
+                    <h3>Best-Sellers Gratuitos</h3>
+                    <p>Os Livros que Mudaram milhares de vidas, Sem custos.</p>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"/>
+                        <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                </div>
+            </a>
+        </div>
+
+        <footer class="footer">
+            <p class="footer-copy">© 2024 Gustavo Costa</p>
+        </footer>
+    </div>
+
+    <script>
+        let triggered = false;
+
+        function openPortal() {
+            if (triggered) return;
+            triggered = true;
+
+            document.body.classList.add('transitioning');
+
+            setTimeout(() => {
+                document.body.classList.remove('transitioning');
+                document.body.classList.add('opened');
+            }, 400);
+
+            setTimeout(() => {
+                document.body.classList.add('complete');
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
