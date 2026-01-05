@@ -1,0 +1,11 @@
+{
+  "name": "tavin-portal",
+  "version": "1.0.0",
+  "description": "Tavin Digital Portal - Landing Page",
+  "scripts": {
+    "build": "echo 'Static HTML - no build needed' && exit 0"
+  },
+  "keywords": ["landing", "portfolio"],
+  "author": "Gustavo Costa",
+  "license": "MIT"
+}
